@@ -1,39 +1,26 @@
-### Rapport de conformité RGPD et risques cloud
+# Conformité RGPD & Risques Cloud
 
-#### 1. Traitements de données identifiés
-| Domaine | Type de Données | Finalité |
-| :--- | :--- | :--- |
-| **RH** | Identité, Bancaire, Santé | Gestion administrative et paie |
-| **Client** | Identité, Achats, Support | Suivi commercial et technique |
-| **Marketing** | Email, Cookies, Profils | Prospection et analyse d'audience |
+Ce tableau récapitule l'intégralité de l'analyse, incluant les traitements, la conformité, les risques liés au cloud et le plan d'action.
 
-#### 2. Vérification de la conformité RGPD
-| Principe | État de l'Analyse | Observation |
-| :--- | :--- | :--- |
-| **Finalité** | Conforme | Les données ne sont utilisées que pour les objectifs déclarés |
-| **Minimisation** | À optimiser | Seules les données utiles sont collectées (pas de données superflues) |
-| **Données Sensibles** | Point d'attention | Les données de santé (RH) font l'objet d'une protection renforcée |
+| Section | Élément Analysé | Détails & Observations | Risque / Impact | Action Corrective |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Traitements** | **RH & Paie** | Gestion administrative, salaires, santé. | Moyen | Sécuriser l'accès aux données de santé. |
+| | **Relation Client** | Identité, historique achats, support technique. | Faible | Minimiser les données stockées. |
+| | **Marketing** | Profilage, cookies, prospection email. | Élevé | Recueillir un consentement explicite. |
+| **2. Conformité** | **Finalité** | Usage strictement limité aux objectifs déclarés. | Conforme | Maintenir la veille sur les usages. |
+| | **Minimisation** | Collecte limitée au strict nécessaire. | À optimiser | Purger les données inutiles. |
+| | **Données Sensibles** | Protection des données de santé (RH). | Point d'attention | Réaliser une AIPD dédiée. |
+| **3. Cloud Act** | **Transferts US** | Dépendance aux hébergeurs américains. | Critique | Vérifier certification DPF. |
+| | **Juridiction** | Conflit entre lois US et RGPD européen. | Critique | Envisager le chiffrement local. |
+| | **Espionnage** | Accès administratif étranger non notifié. | Élevé | Évaluer des solutions souveraines. |
+| **4. Matrice Risques**| **Données Clients** | *Ex: Fuite de l'historique d'achat/profilage.* | Élevé | Renforcer le chiffrement CRM. |
+| | **Non-conformité US** | Sanctions liées aux transferts hors UE. | Critique | Contractualiser les CCT. |
+| | **Défaut Registre** | Absence de documentation légale obligatoire. | Moyen | Rédiger le registre Art. 30. |
+| **5. Actions** | **Registre** | Absence de registre officiel des traitements. | Obligatoire | Création immédiate du registre. |
+| | **Information** | Défaut de transparence sur les transferts. | Obligatoire | Mise à jour mentions légales. |
+| | **Conservation** | Manque de politique de purge des données. | Important | Définir les durées de rétention. |
 
-#### 3. Transferts et risques cloud (Cloud Act)
-| Risque | Nature du Danger | Conséquence Potentielle |
-| :--- | :--- | :--- |
-| **Transferts hors UE** | Juridique | Non-conformité si le fournisseur US n'est pas certifié (DPF) |
-| **Conflit de Juridiction** | Souveraineté | Incompatibilité entre les injonctions US (Cloud Act) et le RGPD |
-| **Espionnage** | Stratégique | Accès administratif étranger sans contrôle judiciaire européen |
-
-#### 4. Matrice des risques juridiques et organisationnels
-| Risque Identifié | Probabilité | Impact / Gravité | Niveau de Risque |
-| :--- | :--- | :--- | :--- |
-| **Transferts USA non conformes** | Élevée | Critique | Critique |
-| **Accès Cloud Act / Espionnage** | Moyenne | Critique | Élevé |
-| **Faille de Sécurité / Fuite** | Moyenne | Majeur | Élevé |
-| **Défaut de Registre & AIPD** | Élevée | Modéré | Moyen |
-| **Conservation excessive** | Très élevée | Faible | Modéré |
-
-#### 5. Synthèse des non-conformités et actions correctives
-| Point de Non-Conformité | Description du Manquement | Action à réaliser |
-| :--- | :--- | :--- |
-| **Registre** | Absence de registre officiel des traitements | Créer et maintenir le registre |
-| **Information** | Défaut d'information sur les transferts US | Mettre à jour les mentions légales & CGU |
-| **Analyses** | Absence d'Analyses d'Impact (AIPD) | Réaliser les AIPD pour les données sensibles |
-| **Conservation** | Manque de politique de purge | Définir et appliquer des durées de rétention |
+**Légende des Risques :**
+**- Critique** : Sanctions lourdes possibles, impact immédiat sur la survie de l'entreprise.
+**- Élevé** : Risque majeur nécessitant une action prioritaire sous 3 mois.
+**- Moyen** : Risque organisationnel à traiter pour une conformité totale.
