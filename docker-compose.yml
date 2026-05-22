@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: tp2_postgres
+    environment:
+      POSTGRES_DB: tp2_users
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d tp2_users"]
+      interval: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: tp2_backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: tp2_users
+      DB_USER: admin
+      DB_PASSWORD: admin123
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: nginx:1.25-alpine
+    container_name: tp2_frontend
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

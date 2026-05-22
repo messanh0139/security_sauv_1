@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>TP2 - SQL Injection</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 6px;
+      color: #856404;
+      margin-bottom: 30px;
+      padding: 10px 20px;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    input {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      padding: 10px;
+      width: 100%;
+    }
+
+    input:focus {
+      border-color: #4a90e2;
+      outline: none;
+    }
+
+    button[type="submit"] {
+      background: #4a90e2;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      padding: 11px;
+      width: 100%;
+    }
+
+    button[type="submit"]:hover { background: #357abd; }
+
+    .payloads {
+      margin-top: 25px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+
+    .payloads p {
+      font-size: 13px;
+      font-weight: bold;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .payload-btn {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      font-size: 12px;
+      margin-bottom: 7px;
+      padding: 8px 10px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .payload-btn:hover { background: #e9ecef; border-color: #4a90e2; }
+
+    #result {
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 15px;
+      padding: 12px;
+      display: none;
+    }
+
+    #result.success { background: #d4edda; border: 1px solid #28a745; color: #155724; }
+    #result.error   { background: #f8d7da; border: 1px solid #dc3545; color: #721c24; }
+    #result.inject  { background: #fff3cd; border: 1px solid #ffc107; color: #856404; }
+
+    .sql-box {
+      background: #1e1e1e;
+      border-radius: 6px;
+      color: #f8f8f2;
+      font-family: monospace;
+      font-size: 12px;
+      margin-top: 20px;
+      padding: 15px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+    }
+
+    table {
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 15px;
+      width: 100%;
+    }
+    th { background: #4a90e2; color: white; padding: 8px; text-align: left; }
+    td { border: 1px solid #ddd; padding: 7px; }
+    tr:nth-child(even) td { background: #f9f9f9; }
+  </style>
+</head>
+<body>
+
+  <div class="warning">
+    Application volontairement vulnérable — Usage pédagogique uniquement
+  </div>
+
+  <div class="card">
+    <h2>🔐 Connexion</h2>
+
+    <form id="loginForm">
+      <label for="username">Identifiant</label>
+      <input type="text" id="username" placeholder="ex : alice" required />
+
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" placeholder="••••••••" required />
+
+      <button type="submit">Se connecter</button>
+    </form>
+
+    <div id="result"></div>
+    <div class="sql-box" id="sqlBox"></div>
+    <div id="tableBox"></div>
+
+    <div class="payloads">
+      <p>Payloads à tester :</p>
+      <button class="payload-btn" data-u="alice" data-p="alice2024">Connexion valide — alice / alice2024</button>
+      <button class="payload-btn" data-u="alice" data-p="mauvais">Connexion invalide — mauvais mot de passe</button>
+      <button class="payload-btn" data-u="' OR '1'='1" data-p="' OR '1'='1">Injection — OR 1=1 (bypass total)</button>
+      <button class="payload-btn" data-u="admin'--" data-p="nimporte">Injection — commentaire SQL sur admin</button>
+      <button class="payload-btn" data-u="' OR 1=1--" data-p="x">Injection — OR 1=1 avec commentaire</button>
+    </div>
+  </div>
+
+  <script>
+    const API = "http://localhost:3000";
+
+    document.querySelectorAll(".payload-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.getElementById("username").value = btn.dataset.u;
+        document.getElementById("password").value = btn.dataset.p;
+      });
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const result   = document.getElementById("result");
+      const sqlBox   = document.getElementById("sqlBox");
+      const tableBox = document.getElementById("tableBox");
+
+      // Afficher la requête SQL construite
+      sqlBox.style.display = "block";
+      sqlBox.textContent =
+        `SELECT id, username, email, role\n` +
+        `FROM users\n` +
+        `WHERE username = '${username}'\n` +
+        `AND   password = '${password}'`;
+
+      try {
+        const res  = await fetch(`${API}/api/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+
+        result.style.display = "block";
+        tableBox.innerHTML = "";
+
+        if (data.success) {
+          const injected = username.includes("'") || password.includes("'");
+          if (injected) {
+            result.className = "inject";
+            result.textContent = `Injection réussie ! ${data.allRows.length} compte(s) récupéré(s) sans mot de passe.`;
+          } else {
+            result.className = "success";
+            result.textContent = `Connexion réussie — ${data.user.username} (rôle : ${data.user.role})`;
+          }
+
+          // Afficher le tableau des lignes retournées
+          if (data.allRows && data.allRows.length > 0) {
+            const cols = Object.keys(data.allRows[0]);
+            let html = "<table><thead><tr>" + cols.map(c => `<th>${c}</th>`).join("") + "</tr></thead><tbody>";
+            data.allRows.forEach(row => {
+              html += "<tr>" + cols.map(c => `<td>${row[c]}</td>`).join("") + "</tr>";
+            });
+            html += "</tbody></table>";
+            tableBox.innerHTML = html;
+          }
+        } else {
+          result.className = "error";
+          result.textContent = `Connexion refusée — ${data.message}`;
+        }
+      } catch (err) {
+        result.style.display = "block";
+        result.className = "error";
+        result.textContent = `Erreur : impossible de contacter le backend (${err.message})`;
+      }
+    });
+  </script>
+
+</body>
+</html>
