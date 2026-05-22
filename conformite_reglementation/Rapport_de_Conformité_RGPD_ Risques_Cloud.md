@@ -1,4 +1,4 @@
-## Conformité RGPD et risques cloud
+### Conformité RGPD et risques cloud
 
 Ce tableau récapitule l'intégralité de l'analyse, incluant les traitements, la conformité, les risques liés au cloud et le plan d'action.
 
@@ -23,5 +23,7 @@ Ce tableau récapitule l'intégralité de l'analyse, incluant les traitements, l
 **Légende des Risques :** 
 
 **- Critique** : Sanctions lourdes possibles, impact immédiat sur la survie de l'entreprise
+
 **- Élevé** : Risque majeur nécessitant une action prioritaire sous 3 mois
+
 **- Moyen** : Risque organisationnel à traiter pour une conformité totale
