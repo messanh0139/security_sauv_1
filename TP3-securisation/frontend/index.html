@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>TP3 - Application Sécurisée</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .badge-secure {
+      background: #d4edda;
+      border: 1px solid #28a745;
+      border-radius: 6px;
+      color: #155724;
+      margin-bottom: 20px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      margin-bottom: 6px;
+      text-align: center;
+      color: #333;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    input {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      padding: 10px;
+      width: 100%;
+    }
+
+    input:focus { border-color: #28a745; outline: none; }
+
+    button[type="submit"] {
+      background: #28a745;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      padding: 11px;
+      width: 100%;
+    }
+
+    button[type="submit"]:hover { background: #1e7e34; }
+
+    #result {
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 15px;
+      padding: 12px;
+      display: none;
+    }
+
+    #result.success { background: #d4edda; border: 1px solid #28a745; color: #155724; }
+    #result.error   { background: #f8d7da; border: 1px solid #dc3545; color: #721c24; }
+
+    .user-card {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      margin-top: 15px;
+      padding: 15px;
+      display: none;
+    }
+
+    .user-card p { font-size: 13px; margin-bottom: 6px; }
+    .user-card strong { color: #333; }
+    .role-admin { color: #dc3545; font-weight: bold; }
+    .role-user  { color: #28a745; font-weight: bold; }
+
+    .security-section {
+      margin-top: 25px;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+
+    .security-section p {
+      font-size: 12px;
+      font-weight: bold;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .test-btn {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      font-size: 12px;
+      margin-bottom: 7px;
+      padding: 8px 10px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .test-btn:hover { background: #e9ecef; border-color: #28a745; }
+    .test-btn.inject-attempt { border-left: 3px solid #dc3545; }
+
+    .info-box {
+      background: #e8f4fd;
+      border: 1px solid #bee5eb;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-top: 20px;
+      padding: 12px;
+      color: #0c5460;
+      line-height: 1.6;
+    }
+
+    .links {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .links a {
+      color: #28a745;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="badge-secure">Application sécurisée — TP3 (bcrypt + requêtes préparées)</div>
+
+  <div class="card">
+    <h2>Connexion</h2>
+    <p class="subtitle">Version sécurisée — injections SQL neutralisées</p>
+
+    <form id="loginForm">
+      <label for="username">Identifiant</label>
+      <input type="text" id="username" placeholder="ex : alice" required />
+
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" placeholder="••••••••" required />
+
+      <button type="submit">Se connecter</button>
+    </form>
+
+    <div id="result"></div>
+    <div class="user-card" id="userCard"></div>
+
+    <!-- Tests de connexion valides -->
+    <div class="security-section">
+      <p>Comptes de test (connexions valides) :</p>
+      <button class="test-btn" data-u="alice"   data-p="alice2024">alice / alice2024 — rôle : user</button>
+      <button class="test-btn" data-u="bob"     data-p="b0bSecure!">bob / b0bSecure! — rôle : user</button>
+      <button class="test-btn" data-u="admin"   data-p="Adm1n$uper!">admin / Adm1n$uper! — rôle : admin</button>
+    </div>
+
+    <!-- Rejeu des payloads TP2 — doivent tous échouer -->
+    <div class="security-section">
+      <p>Tentatives d'injection SQL (rejeu TP2 — toutes refusées) :</p>
+      <button class="test-btn inject-attempt" data-u="' OR '1'='1"  data-p="' OR '1'='1">Bypass — ' OR '1'='1</button>
+      <button class="test-btn inject-attempt" data-u="admin'--"     data-p="nimporte">Commentaire SQL — admin'--</button>
+      <button class="test-btn inject-attempt" data-u="' OR 1=1--"   data-p="x">OR 1=1 avec commentaire</button>
+      <button class="test-btn inject-attempt" data-u="' UNION SELECT 1,2,3,4,5--" data-p="x">UNION injection</button>
+    </div>
+
+    <div class="info-box">
+      <strong>Pourquoi les injections échouent ?</strong><br>
+      Les requêtes préparées transmettent les paramètres <em>séparément</em> du SQL.
+      Le driver psycopg2 échappe toute valeur passée via <code>%s</code> : les guillemets
+      et mots-clés SQL sont traités comme du texte brut, jamais comme du code.
+    </div>
+
+    <div class="links">
+      <a href="http://localhost:3000" target="_blank">Grafana</a> |
+      <a href="http://localhost:9090" target="_blank">Prometheus</a> |
+      <a href="http://localhost:3001/metrics" target="_blank">Métriques</a>
+    </div>
+  </div>
+
+  <script>
+    const API = "http://localhost:3001";
+
+    document.querySelectorAll(".test-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.getElementById("username").value = btn.dataset.u;
+        document.getElementById("password").value = btn.dataset.p;
+      });
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const result   = document.getElementById("result");
+      const userCard = document.getElementById("userCard");
+
+      userCard.style.display = "none";
+      result.style.display   = "none";
+
+      try {
+        const res  = await fetch(`${API}/api/login`, {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+
+        result.style.display = "block";
+
+        if (data.success) {
+          result.className   = "success";
+          result.textContent = data.message;
+
+          const u = data.user;
+          const roleClass = u.role === "admin" ? "role-admin" : "role-user";
+          userCard.style.display = "block";
+          userCard.innerHTML = `
+            <p><strong>ID :</strong> ${u.id}</p>
+            <p><strong>Utilisateur :</strong> ${u.username}</p>
+            <p><strong>E-mail :</strong> ${u.email}</p>
+            <p><strong>Rôle :</strong> <span class="${roleClass}">${u.role}</span></p>
+          `;
+        } else {
+          result.className   = "error";
+          result.textContent = data.message;
+        }
+      } catch (err) {
+        result.style.display = "block";
+        result.className     = "error";
+        result.textContent   = `Erreur réseau : ${err.message}`;
+      }
+    });
+  </script>
+
+</body>
+</html>

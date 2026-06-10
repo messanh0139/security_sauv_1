@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "/home/jes/Bureau/cartographie/TP3-securisation/venv/bin/python",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingTypeStubs": "none"
+  }
+}

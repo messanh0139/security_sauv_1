@@ -1,0 +1,145 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: tp3_postgres
+    environment:
+      POSTGRES_DB:       tp3_users
+      POSTGRES_USER:     admin
+      POSTGRES_PASSWORD: admin123
+    # On active les logs de connexion pour pouvoir les collecter avec Promtail.
+    # logging_collector=off force l'écriture sur stderr, sinon Promtail ne voit rien.
+    command: >
+      postgres
+        -c log_connections=on
+        -c log_disconnections=on
+        -c log_statement=ddl
+        -c log_destination=stderr
+        -c logging_collector=off
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    # Port 5433 pour éviter un conflit si PostgreSQL tourne déjà en local sur 5432
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d tp3_users"]
+      interval: 5s
+      retries: 5
+    networks:
+      - tp3_net
+
+  backend:
+    build: ./backend
+    container_name: tp3_backend
+    environment:
+      DB_HOST:     db
+      DB_PORT:     5432
+      DB_NAME:     tp3_users
+      DB_USER:     admin
+      DB_PASSWORD: admin123
+      PORT:        3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - tp3_net
+
+  frontend:
+    image: nginx:1.25-alpine
+    container_name: tp3_frontend
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - tp3_net
+
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: tp3_postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://admin:admin123@db:5432/tp3_users?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tp3_net
+
+  prometheus:
+    image: prom/prometheus:v2.50.1
+    container_name: tp3_prometheus
+    volumes:
+      - ./supervision/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    ports:
+      - "9090:9090"
+    networks:
+      - tp3_net
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: tp3_loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./supervision/loki/loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - tp3_net
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: tp3_promtail
+    volumes:
+      - ./supervision/promtail/promtail.yml:/etc/promtail/promtail.yml
+      - ./logs:/var/log/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/promtail.yml
+    depends_on:
+      - loki
+    networks:
+      - tp3_net
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: tp3_grafana
+    environment:
+      GF_SECURITY_ADMIN_USER:     admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_AUTH_ANONYMOUS_ENABLED:  "false"
+    volumes:
+      - ./supervision/grafana/provisioning:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - tp3_net
+
+networks:
+  tp3_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  loki_data:
+  grafana_data:
