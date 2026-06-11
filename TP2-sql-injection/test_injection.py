@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "http://localhost:3000"
+BASE_URL = "http://localhost:3002"
 
 RESET = "\033[0m"
 ROUGE = "\033[91m"

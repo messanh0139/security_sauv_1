@@ -20,7 +20,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [{
-        "expr": "increase(login_attempts_total{status=\"success\"}[1h])",
+        "expr": "(sum(increase(login_attempts_total{status=\"success\"}[1h])) or vector(0))",
         "legendFormat": "Succès",
         "refId": "A"
       }],
@@ -80,7 +80,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [{
-        "expr": "increase(login_attempts_total{status=\"error\"}[1h])",
+        "expr": "(sum(increase(login_attempts_total{status=\"error\"}[1h])) or vector(0))",
         "legendFormat": "Erreurs",
         "refId": "A"
       }],
@@ -159,12 +159,12 @@
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
-          "expr": "rate(pg_stat_database_xact_commit_total{datname=\"tp3_users\"}[1m])",
+          "expr": "rate(pg_stat_database_xact_commit{datname=\"tp3_users\"}[1m])",
           "legendFormat": "Commits / s",
           "refId": "A"
         },
         {
-          "expr": "rate(pg_stat_database_xact_rollback_total{datname=\"tp3_users\"}[1m])",
+          "expr": "rate(pg_stat_database_xact_rollback{datname=\"tp3_users\"}[1m])",
           "legendFormat": "Rollbacks / s",
           "refId": "B"
         }
