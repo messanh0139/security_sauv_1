@@ -25,12 +25,6 @@ Suite du TP2 (SQL Injection). Ce TP corrige les vulnérabilités identifiées et
 ```
 
 
-## Prérequis
-
-- Docker et Docker Compose v2
-- Python 3.10+ (pour les scripts de test)
-- Le TP2 doit être arrêté (`docker compose -f ../TP2-sql-injection/docker-compose.yml down`)
-
 
 ## 1. Démarrage
 
@@ -85,7 +79,6 @@ cur.execute(
 )
 ```
 
----
 
 ## 3. Tests
 
@@ -122,7 +115,6 @@ Rejoue les 6 vecteurs d'attaque du TP2. Tous doivent être **neutralisés** (401
 | `' OR 1=1--`                 | Toutes les lignes retournées | 401 Refusée |
 | Guillemet seul `'`           | Erreur SQL exposée (500) | 401 Refusée |
 
----
 
 ## 4. Journalisation
 
@@ -170,7 +162,7 @@ docker compose logs -f
 
 1. Ouvrir http://localhost:3000
 2. Se connecter : `admin` / `admin123`
-3. Aller dans **Dashboards → TP3 → TP3 — Supervision Sécurité**
+3. Aller dans **Dashboards -> TP3 -> TP3 — Supervision Sécurité**
 
 ### 5.2 Panels disponibles
 
@@ -223,11 +215,11 @@ contourne la condition sans même connaître de mot de passe.
 - Dépassements de seuils (nombre d'échecs consécutifs = brute force)
 
 **Q5 — Quelles métriques Grafana permettent de détecter une activité suspecte ?**
-- Pic de `login_attempts_total{status="failure"}` → brute force
-- Ratio échecs/succès > 10:1 → attaque automatisée
-- IP unique avec grand nombre de tentatives → ciblage
-- Augmentation soudaine de `pg_stat_activity_count` → connexions anormales
-- Logs contenant des guillemets ou mots-clés SQL → tentatives d'injection
+- Pic de `login_attempts_total{status="failure"}` -> brute force
+- Ratio échecs/succès > 10:1 -> attaque automatisée
+- IP unique avec grand nombre de tentatives -> ciblage
+- Augmentation soudaine de `pg_stat_activity_count` -> connexions anormales
+- Logs contenant des guillemets ou mots-clés SQL -> tentatives d'injection
 
 **Q6 — Recommandations supplémentaires**
 - Limiter le taux de tentatives par IP (rate limiting)

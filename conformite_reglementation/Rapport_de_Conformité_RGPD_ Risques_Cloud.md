@@ -102,15 +102,15 @@ La criticité de chaque risque est calculée en multipliant sa probabilité d'oc
 
 | Risque | Probabilité | Gravité | Criticité | Niveau |
 |---|:---:|:---:|:---:|:---:|
-| Injection SQL → extraction de la base | 5 | 5 | 25 | **Critique** |
+| Injection SQL -> extraction de la base | 5 | 5 | 25 | **Critique** |
 | Contournement d'authentification (admin) | 5 | 5 | 25 | **Critique** |
 | Fuite des données bancaires | 4 | 5 | 20 | **Critique** |
 | Mots de passe en clair exploitables | 4 | 5 | 20 | **Critique** |
-| Absence de journalisation → attaque non détectée | 4 | 4 | 16 | **Élevé** |
+| Absence de journalisation -> attaque non détectée | 4 | 4 | 16 | **Élevé** |
 | Accès Cloud Act aux données de santé | 3 | 5 | 15 | **Élevé** |
-| Erreurs SQL exposées → reconnaissance | 4 | 3 | 12 | **Élevé** |
+| Erreurs SQL exposées -> reconnaissance | 4 | 3 | 12 | **Élevé** |
 | Brute force sans verrouillage | 3 | 4 | 12 | **Élevé** |
-| Absence de HTTPS → interception | 3 | 4 | 12 | **Élevé** |
+| Absence de HTTPS -> interception | 3 | 4 | 12 | **Élevé** |
 | Permissions DB trop larges | 3 | 4 | 12 | **Élevé** |
 | Absence de registre RGPD (art. 30) | 2 | 4 | 8 | **Moyen** |
 | Données de santé sans AIPD | 2 | 4 | 8 | **Moyen** |

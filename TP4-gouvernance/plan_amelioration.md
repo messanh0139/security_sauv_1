@@ -7,17 +7,17 @@
 
 ## 1. État des lieux
 
-### Ce qui a été accompli (TP2 → TP3)
+### Ce qui a été accompli (TP2 - TP3)
 
 | Mesure | Impact | Statut |
 |---|---|:---:|
-| Requêtes SQL préparées | Élimine les injections SQL | ✅ Fait |
-| Hachage bcrypt des mots de passe | Protège les credentials en cas de fuite DB | ✅ Fait |
-| Messages d'erreur génériques | Empêche la reconnaissance de la base | ✅ Fait |
-| Journalisation JSON structurée | Traçabilité complète des accès | ✅ Fait |
-| Supervision Grafana + Prometheus | Détection des attaques en temps réel | ✅ Fait |
-| Logs Loki avec filtres par événement | Forensics et analyse a posteriori | ✅ Fait |
-| Table `auth_log` en base | Audit trail persistant des authentifications | ✅ Fait |
+| Requêtes SQL préparées | Élimine les injections SQL | Fait |
+| Hachage bcrypt des mots de passe | Protège les credentials en cas de fuite DB | Fait |
+| Messages d'erreur génériques | Empêche la reconnaissance de la base | Fait |
+| Journalisation JSON structurée | Traçabilité complète des accès | Fait |
+| Supervision Grafana + Prometheus | Détection des attaques en temps réel | Fait |
+| Logs Loki avec filtres par événement | Forensics et analyse a posteriori | Fait |
+| Table `auth_log` en base | Audit trail persistant des authentifications | Fait |
 
 ### Ce qui reste à faire
 

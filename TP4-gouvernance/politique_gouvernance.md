@@ -61,9 +61,9 @@ Pour HealthPredict AI, trois enjeux sont particulièrement critiques :
 
 **Rôle :** Responsable métier d'un périmètre de données  
 **Exemples chez HealthPredict AI :**
-- Directeur médical → données de santé des patients
-- Directeur RH → données du personnel
-- Directeur commercial → données clients et marketing
+- Directeur médical -> données de santé des patients
+- Directeur RH -> données du personnel
+- Directeur commercial -> données clients et marketing
 
 **Responsabilités :**
 - Valider les règles d'accès à ses données

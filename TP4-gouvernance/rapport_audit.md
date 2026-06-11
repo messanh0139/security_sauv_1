@@ -137,11 +137,11 @@ Tous les conteneurs de la stack TP3 ont fonctionné sans interruption durant la 
 
 | Mesure | Statut | Preuve |
 |---|:---:|---|
-| Requêtes préparées | ✅ Efficace | 6 injections bloquées, aucun accès non autorisé |
-| Hachage bcrypt | ✅ En place | `DB_INIT: seeded with bcrypt hashes` confirmé |
-| Journalisation JSON | ✅ Complète | Tous les événements tracés avec IP, horodatage, username |
-| Supervision Grafana | ✅ Opérationnelle | Métriques temps réel, logs Loki accessibles |
-| Authentification PG | ✅ SCRAM-SHA-256 | Protocole sécurisé confirmé dans les logs |
+| Requêtes préparées | Efficace | 6 injections bloquées, aucun accès non autorisé |
+| Hachage bcrypt | En place | `DB_INIT: seeded with bcrypt hashes` confirmé |
+| Journalisation JSON | Complète | Tous les événements tracés avec IP, horodatage, username |
+| Supervision Grafana | Opérationnelle | Métriques temps réel, logs Loki accessibles |
+| Authentification PG | SCRAM-SHA-256 | Protocole sécurisé confirmé dans les logs |
 
 ### Ce qui doit être amélioré
 

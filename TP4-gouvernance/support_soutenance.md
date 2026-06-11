@@ -34,8 +34,7 @@ le frontend, l'API backend, le modèle IA, le stockage AWS S3 et le dashboard in
 | Données de santé | Très élevé | Discrimination, chantage |
 | Données techniques (logs, IP) | Standard | Attaque ciblée |
 
-**Enjeu principal :** données de santé = données sensibles au sens RGPD (art. 9)
-→ protection renforcée obligatoire + AIPD requise.
+**Enjeu principal :** données de santé = données sensibles au sens RGPD (art. 9), protection renforcée obligatoire et AIPD requise.
 
 ---
 
@@ -72,10 +71,10 @@ cur.execute("SELECT * FROM users WHERE username = %s", (username,))
 
 2. **Hachage bcrypt** — mot de passe illisible même en cas de fuite de la base
 ```
-alice2024  →  $2b$12$xK7pL3mN9qR2vW8tY1uZ4e...
+alice2024  ->  $2b$12$xK7pL3mN9qR2vW8tY1uZ4e...
 ```
 
-**Résultat :** les 6 vecteurs d'attaque du TP2 → tous bloqués (401 Unauthorized).
+**Résultat :** les 6 vecteurs d'attaque du TP2 -> tous bloqués (401 Unauthorized).
 
 ---
 
@@ -84,9 +83,9 @@ alice2024  →  $2b$12$xK7pL3mN9qR2vW8tY1uZ4e...
 **Architecture de supervision déployée :**
 
 ```
-Flask → /metrics → Prometheus → Grafana (métriques)
-Flask → app.log  → Promtail  → Loki    → Grafana (logs)
-PostgreSQL       → pg_exporter → Prometheus
+Flask -> /metrics -> Prometheus -> Grafana (métriques)
+Flask -> app.log  -> Promtail  -> Loki    -> Grafana (logs)
+PostgreSQL       -> pg_exporter -> Prometheus
 ```
 
 **Dashboard Grafana — ce qu'on observe en temps réel :**
@@ -112,12 +111,12 @@ toutes détectées, tracées et bloquées.
 
 **Constats de l'audit :**
 
-✅ Toutes les attaques bloquées et journalisées  
-✅ Authentification PostgreSQL via SCRAM-SHA-256  
-✅ Aucune erreur serveur (taux d'erreur = 0)  
-⚠️ Attaque automatisée détectée (6 payloads en 716 ms)  
-⚠️ Pas de rate limiting → attaque non interrompue  
-⚠️ Un seul utilisateur DB — moindre privilège non respecté  
+Toutes les attaques bloquées et journalisées  
+Authentification PostgreSQL via SCRAM-SHA-256  
+Aucune erreur serveur (taux d'erreur = 0)  
+Attaque automatisée détectée (6 payloads en 716 ms)  
+Pas de rate limiting -> attaque non interrompue  
+Un seul utilisateur DB — moindre privilège non respecté  
 
 ---
 
@@ -146,7 +145,7 @@ toutes détectées, tracées et bloquées.
 **Règle 3-2-1 appliquée :**
 
 ```
-Données live  →  Dump quotidien (02h00)  →  Archive hebdomadaire (S3)
+Données live  ->  Dump quotidien (02h00)  ->  Archive hebdomadaire (S3)
    [Copie 1]        [Copie 2 — local]          [Copie 3 — hors site]
 ```
 
@@ -191,12 +190,10 @@ de protection dans le temps.
 
 **Les trois piliers d'une sécurité durable :**
 
-```
-Technique          Organisationnel       Réglementaire
-──────────         ───────────────       ─────────────
-Requêtes préparées  Gouvernance           RGPD art. 30
-bcrypt              Rôles définis         AIPD
-HTTPS               Procédures audit      Notification CNIL
-Rate limiting       Formation             DPF / CCT
-Supervision         Tests restauration    Registre traitements
-```
+| Technique | Organisationnel | Réglementaire |
+|---|---|---|
+| Requêtes préparées | Gouvernance | RGPD art. 30 |
+| bcrypt | Rôles définis | AIPD |
+| HTTPS | Procédures audit | Notification CNIL |
+| Rate limiting | Formation | DPF / CCT |
+| Supervision | Tests restauration | Registre traitements |
